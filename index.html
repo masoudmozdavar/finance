@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>آریا فایننس</title>
+
+<!-- ===== PWA ===== -->
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="آریا فایننس">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%236366f1'/%3E%3Ctext y='.9em' font-size='62' x='18'%3E💎%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#6366f1">
+
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jalaali-js@1.2.6/dist/jalaali.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Vazirmatn',sans-serif;
+  background:#f0f4f8;
+  min-height:100vh;
+  color:#1e293b;
+  padding-bottom:90px;
+  padding-top:env(safe-area-inset-top);
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#c7d2fe;border-radius:4px}
+
+/* ========== لاگین ========== */
+#loginScreen{
+  position:fixed;inset:0;z-index:1000;
+  background:linear-gradient(160deg,#eef2ff 0%,#f0fdfa 100%);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.login-card{
+  background:#fff;border-radius:28px;padding:40px 32px;
+  width:100%;max-width:360px;text-align:center;
+  box-shadow:0 20px 60px rgba(99,102,241,0.12),0 4px 16px rgba(0,0,0,0.06);
+  position:relative;overflow:hidden;
+}
+.login-blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:0.25;pointer-events:none}
+.login-logo{
+  width:72px;height:72px;
+  background:linear-gradient(135deg,#6366f1,#0d9488);
+  border-radius:22px;display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin:0 auto 18px;
+  box-shadow:0 8px 24px rgba(99,102,241,0.3);position:relative;z-index:1;
+}
+.login-input{
+  width:100%;background:#f8fafc;border:2px solid #e2e8f0;
+  border-radius:14px;padding:13px 16px;
+  font-family:'Vazirmatn',sans-serif;font-size:20px;
+  text-align:center;letter-spacing:6px;outline:none;
+  transition:all .3s;color:#1e293b;position:relative;z-index:1;
+}
+.login-input:focus{border-color:#6366f1;background:#eef2ff;box-shadow:0 0 0 4px rgba(99,102,241,0.1)}
+.login-btn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,#6366f1,#0d9488);
+  border:none;border-radius:14px;color:#fff;
+  font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;margin-top:14px;
+  box-shadow:0 8px 24px rgba(99,102,241,0.3);
+  transition:transform .2s;position:relative;z-index:1;
+}
+.login-btn:active{transform:scale(0.97)}
+
+/* ========== هدر ========== */
+.app-header{
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(99,102,241,0.08);
+  padding:14px 20px;position:sticky;top:0;z-index:100;
+}
+
+/* ========== کارت موجودی با blob ========== */
+.balance-card{
+  background:#fff;border-radius:24px;padding:24px 20px;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(99,102,241,0.1),0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom:14px;
+}
+.blob-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:24px}
+.blob{position:absolute;border-radius:50%;filter:blur(35px);opacity:0.18}
+.blob-1{width:180px;height:180px;background:#6366f1;top:-40px;left:-40px;animation:blobMove1 8s ease-in-out infinite alternate}
+.blob-2{width:140px;height:140px;background:#0d9488;bottom:-30px;right:-20px;animation:blobMove2 10s ease-in-out infinite alternate}
+.blob-3{width:100px;height:100px;background:#818cf8;top:40%;left:40%;animation:blobMove3 12s ease-in-out infinite alternate}
+@keyframes blobMove1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,20px) scale(1.2)}}
+@keyframes blobMove2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-25px,-20px) scale(1.15)}}
+@keyframes blobMove3{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-20px,15px) scale(1.1)}100%{transform:translate(20px,-10px) scale(0.9)}}
+
+/* ========== کارت آماری ========== */
+.stat-card{background:#fff;border-radius:20px;padding:18px 14px;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.05);transition:transform .25s}
+.stat-card:active{transform:scale(0.97)}
+.stat-blob{position:absolute;border-radius:50%;filter:blur(25px);opacity:0.15;pointer-events:none}
+.saving-card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.05);margin-bottom:14px;position:relative;overflow:hidden}
+
+/* ========== تب پایین ========== */
+.bottom-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(20px);
+  border-top:1px solid rgba(99,102,241,0.08);
+  padding:8px 16px calc(16px + env(safe-area-inset-bottom));
+  display:flex;justify-content:space-around;z-index:200;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.06);
+}
+.bottom-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;border-radius:14px;background:transparent;border:none;color:#94a3b8;font-family:'Vazirmatn',sans-serif;font-size:9px;font-weight:700;cursor:pointer;transition:all .3s;min-width:56px}
+.bottom-btn .icon{font-size:20px;transition:transform .3s}
+.bottom-btn.active{color:#6366f1;background:rgba(99,102,241,0.08)}
+.bottom-btn.active .icon{transform:scale(1.15)}
+
+/* ========== دکمه‌ها ========== */
+.btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#0d9488);border:none;border-radius:14px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(99,102,241,0.25);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:active{transform:scale(0.97)}
+.btn-success{flex:1;padding:12px;background:linear-gradient(135deg,#0d9488,#10b981);border:none;border-radius:12px;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(13,148,136,0.25);transition:all .2s}
+.btn-success:active{transform:scale(0.97)}
+.btn-ghost{padding:12px 16px;background:#f1f5f9;border:none;border-radius:12px;color:#64748b;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{background:#e2e8f0}
+.btn-danger-ghost{padding:12px 14px;background:#fff5f5;border:1px solid #fecaca;border-radius:12px;color:#ef4444;font-family:'Vazirmatn',sans-serif;cursor:pointer;transition:all .2s;font-size:14px}
+
+/* ========== فرم ========== */
+.form-card{background:#fff;border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.05);animation:slideDown .3s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.form-label{display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:6px}
+.form-input{width:100%;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 14px;color:#1e293b;font-family:'Vazirmatn',sans-serif;font-size:14px;outline:none;transition:all .3s}
+.form-input:focus{border-color:#6366f1;background:#eef2ff;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+.form-select{width:100%;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 14px;color:#1e293b;font-family:'Vazirmatn',sans-serif;font-size:14px;outline:none;appearance:none;cursor:pointer}
+.form-select:focus{border-color:#6366f1;background:#eef2ff}
+
+/* ========== کارت اقساط ========== */
+.debt-card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.05);transition:all .3s;animation:fadeInUp .4s ease;position:relative;overflow:hidden;margin-bottom:14px}
+.debt-card:hover{box-shadow:0 8px 28px rgba(0,0,0,0.09);transform:translateY(-2px)}
+.debt-overdue{border:1.5px solid #fecaca;background:#fff5f5}
+.debt-warning{border:1.5px solid #fde68a;background:#fffbeb}
+.debt-settled{border:1.5px solid #bbf7d0;background:#f0fdf4;opacity:0.8}
+.debt-normal{border:1.5px solid #e0e7ff}
+
+/* ========== پروگرس ========== */
+.progress-track{background:#f1f5f9;border-radius:10px;height:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#6366f1,#0d9488);transition:width .8s ease;position:relative;overflow:hidden}
+.progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:shimmer 2s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* ========== بج ========== */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.badge-blue{background:#eef2ff;color:#6366f1;border:1px solid #c7d2fe}
+.badge-green{background:#f0fdf4;color:#059669;border:1px solid #bbf7d0}
+.badge-red{background:#fff5f5;color:#ef4444;border:1px solid #fecaca;animation:pulse 1.5s infinite}
+.badge-yellow{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+
+/* ========== تراکنش ========== */
+.trans-item{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #f1f5f9;transition:background .15s}
+.trans-item:last-child{border-bottom:none}
+.trans-item:active{background:#f8fafc}
+.trans-cat{display:inline-block;padding:3px 9px;background:#f1f5f9;border-radius:8px;font-size:10px;font-weight:700;color:#64748b}
+
+/* ========== هشدار ========== */
+.alert-card{border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.alert-red{background:#fff5f5;border:1px solid #fecaca}
+.alert-yellow{background:#fffbeb;border:1px solid #fde68a}
+
+/* ========== پیشنهاد و بازار ========== */
+.suggest-card{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:16px;padding:14px;transition:all .25s;margin-bottom:10px}
+.suggest-card:hover{background:#f1f5f9}
+.market-card{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:16px;padding:14px;text-align:center;transition:all .2s}
+.section-card{background:#fff;border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,0.05)}
+
+/* ========== توست ========== */
+#toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%) translateY(16px);background:#1e293b;border-radius:12px;padding:10px 20px;font-size:13px;font-weight:600;color:#fff;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ========== صفحات ========== */
+.page{display:none}
+.page.active{display:block;animation:fadeInUp .3s ease}
+
+/* ========== جدول ========== */
+.report-table{width:100%;border-collapse:collapse;font-size:12px}
+.report-table th{background:#f1f5f9;padding:10px 12px;text-align:right;font-weight:700;color:#475569}
+.report-table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#334155}
+.report-table tr:hover td{background:#f8fafc}
+
+input[type=number]{direction:ltr;text-align:right}
+</style>
+</head>
+<body>
+
+<!-- ===== لاگین ===== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-blob" style="width:200px;height:200px;background:#6366f1;top:-80px;right:-60px"></div>
+    <div class="login-blob" style="width:160px;height:160px;background:#0d9488;bottom:-60px;left:-50px"></div>
+    <div class="login-logo">💎</div>
+    <h1 style="font-size:22px;font-weight:900;color:#1e293b;margin-bottom:4px;position:relative;z-index:1">آریا فایننس</h1>
+    <p style="color:#94a3b8;font-size:13px;margin-bottom:24px;position:relative;z-index:1">مدیریت هوشمند مالی خانواده</p>
+    <input type="password" id="passInput" class="login-input" placeholder="• • • •" inputmode="numeric" maxlength="10">
+    <button class="login-btn" onclick="checkPass()">ورود به سیستم ←</button>
+    <p id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px;display:none;position:relative;z-index:1">رمز اشتباه است!</p>
+  </div>
+</div>
+
+<!-- ===== اپ ===== -->
+<div id="appMain">
+  <div class="app-header">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <h1 style="font-size:17px;font-weight:900;background:linear-gradient(135deg,#6366f1,#0d9488);-webkit-background-clip:text;-webkit-text-fill-color:transparent">💎 آریا فایننس</h1>
+        <p id="headerDate" style="font-size:10px;color:#94a3b8;margin-top:1px"></p>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="backupData()" style="background:#f0fdf4;border:1px solid #bbf7d0;color:#059669;padding:7px 10px;border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:700;cursor:pointer">📥</button>
+        <button onclick="document.getElementById('restoreFile').click()" style="background:#eef2ff;border:1px solid #c7d2fe;color:#6366f1;padding:7px 10px;border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:700;cursor:pointer">📤</button>
+        <button onclick="logout()" style="background:#fff5f5;border:1px solid #fecaca;color:#ef4444;padding:7px 10px;border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:700;cursor:pointer">خروج</button>
+        <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreData(event)">
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:680px;margin:0 auto;padding:16px">
+
+    <!-- داشبورد -->
+    <div id="pageDashboard" class="page active">
+      <div class="balance-card">
+        <div class="blob-wrap"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+        <div style="position:relative;z-index:1">
+          <p style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">💰 موجودی خالص</p>
+          <p id="totalBalance" style="font-size:36px;font-weight:900;color:#1e293b;line-height:1">0</p>
+          <p style="font-size:11px;color:#94a3b8;margin-top:6px">ریال</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="stat-card">
+          <div class="stat-blob" style="width:100px;height:100px;background:#6366f1;top:-20px;right:-20px"></div>
+          <div style="position:relative;z-index:1">
+            <p style="font-size:10px;font-weight:700;color:#6366f1;margin-bottom:6px">📈 درآمد کل</p>
+            <p id="totalIncome" style="font-size:18px;font-weight:900;color:#1e293b">0</p>
+            <p style="font-size:9px;color:#94a3b8;margin-top:2px">ریال</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-blob" style="width:100px;height:100px;background:#ef4444;top:-20px;left:-20px"></div>
+          <div style="position:relative;z-index:1">
+            <p style="font-size:10px;font-weight:700;color:#ef4444;margin-bottom:6px">📉 هزینه کل</p>
+            <p id="totalExpense" style="font-size:18px;font-weight:900;color:#1e293b">0</p>
+            <p style="font-size:9px;color:#94a3b8;margin-top:2px">ریال</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="saving-card">
+        <div class="stat-blob" style="width:120px;height:120px;background:#0d9488;top:-30px;left:-30px;opacity:0.12"></div>
+        <div style="position:relative;z-index:1">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+            <div>
+              <p style="font-size:11px;font-weight:700;color:#0d9488;margin-bottom:4px">🏦 پس‌انداز ماه جاری</p>
+              <p id="monthlySaving" style="font-size:22px;font-weight:900;color:#1e293b">0</p>
+            </div>
+            <div style="text-align:left">
+              <p style="font-size:10px;color:#94a3b8">نرخ پس‌انداز</p>
+              <p id="savingRate" style="font-size:24px;font-weight:900;color:#0d9488">0%</p>
+            </div>
+          </div>
+          <div class="progress-track"><div id="savingProgress" class="progress-fill" style="width:0%;background:linear-gradient(90deg,#0d9488,#10b981)"></div></div>
+        </div>
+      </div>
+
+      <div id="alertsContainer"></div>
+
+      <div class="section-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="font-size:14px;font-weight:700;color:#1e293b">📊 قیمت بازار</h3>
+          <button onclick="toggleMarketEdit()" style="background:#eef2ff;border:1px solid #c7d2fe;color:#6366f1;padding:5px 10px;border-radius:8px;font-family:'Vazirmatn',sans-serif;font-size:11px;font-weight:700;cursor:pointer">✏️ ویرایش</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="marketGrid"></div>
+        <div id="marketEditForm" style="display:none;margin-top:14px;animation:slideDown .3s">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+            <div><label class="form-label">💵 دلار</label><input type="number" id="mDollar" class="form-input" style="font-size:13px;padding:9px 10px"></div>
+            <div><label class="form-label">🥇 طلا</label><input type="number" id="mGold" class="form-input" style="font-size:13px;padding:9px 10px"></div>
+            <div><label class="form-label">🪙 سکه</label><input type="number" id="mCoin" class="form-input" style="font-size:13px;padding:9px 10px"></div>
+          </div>
+          <button onclick="saveMarket()" class="btn-primary" style="font-size:13px;padding:10px">ذخیره قیمت‌ها</button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3 style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:12px">🤖 پیشنهادهای هوشمند</h3>
+        <div id="smartSuggestions"></div>
+      </div>
+
+      <div class="section-card">
+        <h3 style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:14px">🍩 توزیع هزینه‌ها</h3>
+        <div style="max-height:260px;position:relative"><canvas id="chartExpense"></canvas></div>
+      </div>
+    </div>
+
+    <!-- اقساط -->
+    <div id="pageDebts" class="page">
+      <button onclick="toggleDebtForm()" class="btn-primary" style="margin-bottom:14px"><span style="font-size:18px">＋</span> ثبت وام / قسط جدید</button>
+      <div id="debtForm" style="display:none" class="form-card">
+        <h3 style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:16px">📋 اطلاعات وام</h3>
+        <form id="debtFormInner">
+          <div style="margin-bottom:12px"><label class="form-label">عنوان وام</label><input type="text" id="dTitle" class="form-input" placeholder="مثال: وام مسکن" required></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <div><label class="form-label">مبلغ کل (ریال)</label><input type="number" id="dTotalAmount" class="form-input" required></div>
+            <div><label class="form-label">مبلغ هر قسط</label><input type="number" id="dInstallmentAmount" class="form-input" required></div>
+            <div><label class="form-label">تعداد کل اقساط</label><input type="number" id="dTotalCount" class="form-input" required></div>
+            <div><label class="form-label">پرداختی تاکنون</label><input type="number" id="dPaidCount" value="0" class="form-input"></div>
+          </div>
+          <div style="margin-bottom:16px"><label class="form-label">تاریخ اولین سررسید</label><input type="text" id="dStartDate" data-jdp class="form-input" placeholder="انتخاب تاریخ" required readonly></div>
+          <div style="display:flex;gap:10px">
+            <button type="button" onclick="toggleDebtForm()" class="btn-ghost" style="flex:1">انصراف</button>
+            <button type="submit" class="btn-primary" style="flex:2">ثبت در سیستم</button>
+          </div>
+        </form>
+      </div>
+      <div id="debtCardsGrid"></div>
+    </div>
+
+    <!-- تراکنش -->
+    <div id="pageTrans" class="page">
+      <div class="form-card">
+        <h3 style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:14px">➕ ثبت تراکنش</h3>
+        <form id="transactionForm">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+            <div><label class="form-label">نوع</label><select id="tType" class="form-select" onchange="updateCategories()"><option value="income">📈 درآمد</option><option value="expense">📉 هزینه</option></select></div>
+            <div><label class="form-label">دسته‌بندی</label><select id="tCategory" class="form-select"></select></div>
+            <div><label class="form-label">مبلغ (ریال)</label><input type="number" id="tAmount" class="form-input" required></div>
+            <div><label class="form-label">تاریخ</label><input type="text" id="tDate" data-jdp class="form-input" required readonly></div>
+          </div>
+          <div style="margin-bottom:12px"><label class="form-label">توضیحات</label><input type="text" id="tDesc" class="form-input" placeholder="اختیاری..."></div>
+          <button type="submit" class="btn-primary">ثبت تراکنش</button>
+        </form>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <select id="filterType" class="form-select" style="flex:1" onchange="updateUI()"><option value="all">همه</option><option value="income">درآمد</option><option value="expense">هزینه</option></select>
+        <select id="filterMonth" class="form-select" style="flex:1" onchange="updateUI()"><option value="all">همه ماه‌ها</option></select>
+      </div>
+      <div class="section-card" style="padding:0;overflow:hidden"><div id="transactionList"></div></div>
+    </div>
+
+    <!-- گزارش -->
+    <div id="pageReport" class="page">
+      <div class="section-card"><h3 style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:14px">📊 درآمد و هزینه ماهانه</h3><div style="max-height:240px"><canvas id="chartMonthly"></canvas></div></div>
+      <div class="section-card"><h3 style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:14px">📈 روند موجودی</h3><div style="max-height:220px"><canvas id="chartTrend"></canvas></div></div>
+      <div class="section-card" style="overflow:hidden"><h3 style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:14px">📋 خلاصه ماهانه</h3><div style="overflow-x:auto"><table class="report-table" id="monthlyTable"></table></div></div>
+    </div>
+
+    <div style="text-align:center;padding:8px 0"><button onclick="clearAllData()" style="background:none;border:none;color:#cbd5e1;font-family:'Vazirmatn',sans-serif;font-size:11px;cursor:pointer">حذف کامل اطلاعات</button></div>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <button class="bottom-btn active" id="navDashboard" onclick="switchPage('Dashboard')"><span class="icon">🏠</span>داشبورد</button>
+  <button class="bottom-btn" id="navDebts" onclick="switchPage('Debts')"><span class="icon">📋</span>اقساط</button>
+  <button class="bottom-btn" id="navTrans" onclick="switchPage('Trans')"><span class="icon">💸</span>تراکنش</button>
+  <button class="bottom-btn" id="navReport" onclick="switchPage('Report')"><span class="icon">📊</span>گزارش</button>
+</div>
+
+<div id="toast"></div>
+<script>
+// ===== تنظیمات =====
+const APP_PASSWORD="1234"; // 🔴 رمز رو عوض کن
+const categories={
+  income:['حقوق','پاداش','سود سپرده','یارانه','فروش','اجاره دریافتی','سایر درآمدها'],
+  expense:['خورد و خوراک','قبض آب/برق/گاز','اجاره خانه','پوشاک','درمان','حمل و نقل','تفریح','اقساط','آموزش','سایر هزینه‌ها']
+};
+
+// ===== داده‌ها =====
+let transactions=JSON.parse(localStorage.getItem('af_transactions'))||[];
+let debts=JSON.parse(localStorage.getItem('af_debts'))||[];
+let marketPrices=JSON.parse(localStorage.getItem('af_market'))||{dollar:0,gold:0,coin:0,updatedAt:''};
+
+// ===== تاریخ شمسی =====
+function getTodayShamsi(){
+  const n=new Date();
+  const j=jalaali.toJalaali(n.getFullYear(),n.getMonth()+1,n.getDate());
+  return `${j.jy}/${String(j.jm).padStart(2,'0')}/${String(j.jd).padStart(2,'0')}`;
+}
+function jalaliToDayNum(s){
+  const p=s.split('/').map(Number);
+  const g=jalaali.toGregorian(p[0],p[1],p[2]);
+  return Math.floor(new Date(g.gy,g.gm-1,g.gd).getTime()/86400000);
+}
+function daysBetween(d1,d2){return jalaliToDayNum(d2)-jalaliToDayNum(d1);}
+function jalaliMonthLen(jy,jm){
+  if(jm<=6)return 31;if(jm<=11)return 30;
+  return jalaali.isLeapJalaaliYear(jy)?30:29;
+}
+function addMonths(s,n){
+  if(!s)return'';
+  let[y,m,d]=s.split('/').map(Number);
+  m+=n;while(m>12){m-=12;y++;}
+  const mx=jalaliMonthLen(y,m);if(d>mx)d=mx;
+  return`${y}/${String(m).padStart(2,'0')}/${String(d).padStart(2,'0')}`;
+}
+function shamsiMonthName(m){return['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'][m-1]||m;}
+function formatMoney(a){return Number(a).toLocaleString('fa-IR');}
+function getPersianYearMonth(d){const p=d.split('/');return`${p[0]}/${p[1]}`;}
+
+// ===== لاگین (localStorage برای آیفون) =====
+function checkPass(){
+  if(document.getElementById('passInput').value===APP_PASSWORD){
+    document.getElementById('loginScreen').style.display='none';
+    localStorage.setItem('af_logged','1');
+    initNotifications();
+    showToast('👋 خوش آمدید!');
+  }else{
+    document.getElementById('loginError').style.display='block';
+    document.getElementById('passInput').value='';
+  }
+}
+function logout(){
+  if(confirm('از حساب خارج می‌شوید؟')){
+    localStorage.removeItem('af_logged');
+    location.reload();
+  }
+}
+document.getElementById('passInput').addEventListener('keypress',e=>{if(e.key==='Enter')checkPass();});
+if(localStorage.getItem('af_logged')==='1'){
+  document.getElementById('loginScreen').style.display='none';
+  setTimeout(initNotifications,500);
+}
+
+// ===== نوتیفیکیشن =====
+function initNotifications(){
+  if(!('Notification'in window))return;
+  if(Notification.permission==='default'){
+    Notification.requestPermission().then(p=>{if(p==='granted')checkAndSendNotifications();});
+  }else if(Notification.permission==='granted')checkAndSendNotifications();
+}
+function checkAndSendNotifications(){
+  const today=getTodayShamsi();
+  const last=localStorage.getItem('af_lastNotif');
+  if(last===today)return;
+  localStorage.setItem('af_lastNotif',today);
+  debts.forEach(d=>{
+    if(d.paidCount>=d.totalCount)return;
+    const diff=daysBetween(today,d.nextDueDate);
+    if(diff<0)sendNotif('🚨 قسط معوق!',`${d.title} - ${formatMoney(d.installmentAmount)} ریال - ${Math.abs(diff)} روز گذشته`);
+    else if(diff<=3)sendNotif('⏰ یادآوری سررسید',`${d.title} - ${diff===0?'امروز سررسید!':diff+' روز دیگر'}`);
+  });
+}
+function sendNotif(title,body){
+  if(Notification.permission!=='granted')return;
+  try{new Notification(title,{body,icon:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💎%3C/text%3E%3C/svg%3E"});}catch(e){}
+}
+
+// ===== توست =====
+function showToast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ===== ناوبری =====
+function switchPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bottom-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page'+name).classList.add('active');
+  document.getElementById('nav'+name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='Report')renderCharts();
+  if(name==='Trans')updateFilterMonths();
+}
+
+// ===== بازار =====
+function toggleMarketEdit(){
+  const f=document.getElementById('marketEditForm');
+  const show=f.style.display==='none';
+  f.style.display=show?'block':'none';
+  if(show){
+    document.getElementById('mDollar').value=marketPrices.dollar||'';
+    document.getElementById('mGold').value=marketPrices.gold||'';
+    document.getElementById('mCoin').value=marketPrices.coin||'';
+  }
+}
+function saveMarket(){
+  marketPrices={
+    dollar:parseFloat(document.getElementById('mDollar').value)||0,
+    gold:parseFloat(document.getElementById('mGold').value)||0,
+    coin:parseFloat(document.getElementById('mCoin').value)||0,
+    updatedAt:getTodayShamsi()
+  };
+  localStorage.setItem('af_market',JSON.stringify(marketPrices));
+  document.getElementById('marketEditForm').style.display='none';
+  renderMarket();renderSuggestions();
+  showToast('✅ قیمت‌ها ذخیره شد');
+}
+function renderMarket(){
+  const items=[
+    {icon:'💵',label:'دلار',val:marketPrices.dollar,unit:'تومان'},
+    {icon:'🥇',label:'طلا ۱۸ع',val:marketPrices.gold,unit:'تومان/گرم'},
+    {icon:'🪙',label:'سکه',val:marketPrices.coin,unit:'تومان'},
+  ];
+  document.getElementById('marketGrid').innerHTML=items.map(i=>`
+    <div class="market-card">
+      <div style="font-size:22px;margin-bottom:6px">${i.icon}</div>
+      <p style="font-size:10px;color:#94a3b8;margin-bottom:4px;font-weight:600">${i.label}</p>
+      <p style="font-size:13px;font-weight:900;color:#1e293b">${i.val?formatMoney(i.val):'---'}</p>
+      <p style="font-size:9px;color:#cbd5e1;margin-top:2px">${i.unit}</p>
+      ${marketPrices.updatedAt?`<p style="font-size:9px;color:#94a3b8;margin-top:4px">${marketPrices.updatedAt}</p>`:''}
+    </div>`).join('');
+}
+
+// ===== پیشنهادهای هوشمند =====
+function renderSuggestions(){
+  const today=getTodayShamsi();
+  const ym=getPersianYearMonth(today);
+  const mt=transactions.filter(t=>getPersianYearMonth(t.date)===ym);
+  const mIncome=mt.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const mExpense=mt.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const balance=transactions.reduce((s,t)=>t.type==='income'?s+t.amount:s-t.amount,0);
+  const savingRate=mIncome>0?((mIncome-mExpense)/mIncome*100):0;
+  const suggestions=[];
+
+  if(mIncome>0&&savingRate<20)suggestions.push({icon:'⚠️',color:'#fffbeb',border:'#fde68a',tc:'#92400e',title:'نرخ پس‌انداز پایین',text:`این ماه ${savingRate.toFixed(1)}٪ پس‌انداز داشتید. حداقل ۲۰٪ توصیه می‌شود.`});
+  if(mIncome>0&&savingRate>=20)suggestions.push({icon:'🌟',color:'#f0fdf4',border:'#bbf7d0',tc:'#065f46',title:'پس‌انداز عالی!',text:`نرخ پس‌انداز ${savingRate.toFixed(1)}٪ فوق‌العاده است!`});
+  if(balance>0&&marketPrices.dollar>0){const da=Math.floor(balance/10/marketPrices.dollar);if(da>=1)suggestions.push({icon:'💵',color:'#eef2ff',border:'#c7d2fe',tc:'#3730a3',title:'فرصت ارز',text:`با موجودی فعلی حدود ${formatMoney(da)} دلار می‌توانید تهیه کنید.`});}
+  if(balance>0&&marketPrices.gold>0){const ga=Math.floor(balance/10/marketPrices.gold);if(ga>=1)suggestions.push({icon:'🥇',color:'#fffbeb',border:'#fde68a',tc:'#78350f',title:'فرصت طلا',text:`با موجودی فعلی حدود ${formatMoney(ga)} گرم طلا می‌توانید تهیه کنید.`});}
+
+  const expCats={};
+  mt.filter(t=>t.type==='expense').forEach(t=>{expCats[t.category]=(expCats[t.category]||0)+t.amount;});
+  const top=Object.entries(expCats).sort((a,b)=>b[1]-a[1])[0];
+  if(top&&mExpense>0&&top[1]/mExpense>0.4)suggestions.push({icon:'📊',color:'#fff5f5',border:'#fecaca',tc:'#7f1d1d',title:`هزینه بالا در "${top[0]}"`,text:`${(top[1]/mExpense*100).toFixed(0)}٪ هزینه‌ها در این بخش بوده.`});
+
+  const totalInst=debts.filter(d=>d.paidCount<d.totalCount).reduce((s,d)=>s+d.installmentAmount,0);
+  if(mIncome>0&&totalInst/mIncome>0.4)suggestions.push({icon:'🏦',color:'#fff5f5',border:'#fecaca',tc:'#7f1d1d',title:'بار اقساط سنگین',text:`اقساط ماهانه بیش از ۴۰٪ درآمد شماست.`});
+
+  if(suggestions.length===0)suggestions.push({icon:'💡',color:'#f0f9ff',border:'#bae6fd',tc:'#0c4a6e',title:'شروع کنید',text:'اطلاعات مالی وارد کنید تا پیشنهادهای شخصی دریافت کنید.'});
+
+  document.getElementById('smartSuggestions').innerHTML=suggestions.map(s=>`
+    <div class="suggest-card" style="background:${s.color};border-color:${s.border}">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:20px;flex-shrink:0">${s.icon}</span>
+        <div><p style="font-size:13px;font-weight:700;margin-bottom:3px;color:${s.tc}">${s.title}</p><p style="font-size:11px;color:#475569;line-height:1.7">${s.text}</p></div>
+      </div>
+    </div>`).join('');
+}
+
+// ===== چارت‌ها =====
+let chartExpInst=null,chartMonthlyInst=null,chartTrendInst=null;
+function destroyChart(c){if(c){try{c.destroy();}catch(e){}}return null;}
+function renderCharts(){renderExpenseChart();renderMonthlyChart();renderTrendChart();renderMonthlyTable();}
+
+function renderExpenseChart(){
+  const data={};
+  transactions.filter(t=>t.type==='expense').forEach(t=>{data[t.category]=(data[t.category]||0)+t.amount;});
+  const labels=Object.keys(data),vals=Object.values(data);
+  const cv=document.getElementById('chartExpense');
+  if(labels.length===0){cv.style.display='none';return;}
+  cv.style.display='block';
+  chartExpInst=destroyChart(chartExpInst);
+  chartExpInst=new Chart(cv,{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:['#6366f1','#0d9488','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#10b981','#f97316','#ec4899','#14b8a6'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{color:'#475569',font:{family:'Vazirmatn',size:10},padding:10}},tooltip:{callbacks:{label:c=>`${c.label}: ${formatMoney(c.raw)} ریال`}}}}});
+}
+
+function renderMonthlyChart(){
+  const md={};
+  transactions.forEach(t=>{const ym=getPersianYearMonth(t.date);if(!md[ym])md[ym]={income:0,expense:0};if(t.type==='income')md[ym].income+=t.amount;else md[ym].expense+=t.amount;});
+  const sorted=Object.keys(md).sort();
+  const labels=sorted.map(k=>{const p=k.split('/');return shamsiMonthName(parseInt(p[1]))+' '+p[0];});
+  chartMonthlyInst=destroyChart(chartMonthlyInst);
+  chartMonthlyInst=new Chart(document.getElementById('chartMonthly'),{type:'bar',data:{labels,datasets:[{label:'درآمد',data:sorted.map(k=>md[k].income),backgroundColor:'rgba(13,148,136,0.7)',borderRadius:6,borderSkipped:false},{label:'هزینه',data:sorted.map(k=>md[k].expense),backgroundColor:'rgba(239,68,68,0.7)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#475569',font:{family:'Vazirmatn',size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${formatMoney(c.raw)}`}}},scales:{x:{ticks:{color:'#94a3b8',font:{family:'Vazirmatn',size:10}},grid:{color:'#f1f5f9'}},y:{ticks:{color:'#94a3b8',font:{family:'Vazirmatn',size:10},callback:v=>formatMoney(v)},grid:{color:'#f1f5f9'}}}}});
+}
+
+function renderTrendChart(){
+  const sorted=[...transactions].sort((a,b)=>a.date.localeCompare(b.date));
+  let run=0;
+  const pts=sorted.map(t=>{run+=t.type==='income'?t.amount:-t.amount;return{x:t.date,y:run};});
+  chartTrendInst=destroyChart(chartTrendInst);
+  if(pts.length<2)return;
+  chartTrendInst=new Chart(document.getElementById('chartTrend'),{type:'line',data:{labels:pts.map(p=>p.x),datasets:[{label:'موجودی',data:pts.map(p=>p.y),borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.08)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#6366f1',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#475569',font:{family:'Vazirmatn',size:11}}},tooltip:{callbacks:{label:c=>`موجودی: ${formatMoney(c.raw)} ریال`}}},scales:{x:{ticks:{color:'#94a3b8',font:{family:'Vazirmatn',size:9},maxRotation:45},grid:{color:'#f1f5f9'}},y:{ticks:{color:'#94a3b8',font:{family:'Vazirmatn',size:10},callback:v=>formatMoney(v)},grid:{color:'#f1f5f9'}}}}});
+}
+
+function renderMonthlyTable(){
+  const md={};
+  transactions.forEach(t=>{const ym=getPersianYearMonth(t.date);if(!md[ym])md[ym]={income:0,expense:0};if(t.type==='income')md[ym].income+=t.amount;else md[ym].expense+=t.amount;});
+  const sorted=Object.keys(md).sort().reverse();
+  const table=document.getElementById('monthlyTable');
+  if(!sorted.length){table.innerHTML='<tr><td style="padding:20px;text-align:center;color:#94a3b8">داده‌ای موجود نیست</td></tr>';return;}
+  table.innerHTML=`<thead><tr><th>ماه</th><th>درآمد</th><th>هزینه</th><th>پس‌انداز</th><th>نرخ</th></tr></thead><tbody>${sorted.map(k=>{const d=md[k],sv=d.income-d.expense,rt=d.income>0?(sv/d.income*100):0,p=k.split('/');return`<tr><td style="font-weight:700">${shamsiMonthName(parseInt(p[1]))} ${p[0]}</td><td style="color:#0d9488;font-weight:600">${formatMoney(d.income)}</td><td style="color:#ef4444;font-weight:600">${formatMoney(d.expense)}</td><td style="color:${sv>=0?'#0d9488':'#ef4444'};font-weight:700">${formatMoney(sv)}</td><td><span style="background:${rt>=20?'#f0fdf4':'#fff5f5'};color:${rt>=20?'#059669':'#ef4444'};padding:3px 8px;border-radius:8px;font-size:11px;font-weight:700">${rt.toFixed(1)}%</span></td></tr>`;}).join('')}</tbody>`;
+}
+// ===== تراکنش‌ها =====
+document.getElementById('transactionForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const type=document.getElementById('tType').value;
+  transactions.push({
+    id:Date.now(),type,
+    category:document.getElementById('tCategory').value,
+    amount:parseFloat(document.getElementById('tAmount').value),
+    date:document.getElementById('tDate').value,
+    desc:document.getElementById('tDesc').value
+  });
+  saveData();this.reset();
+  document.getElementById('tType').value=type;
+  document.getElementById('tDate').value=getTodayShamsi();
+  updateCategories();
+  showToast('✅ تراکنش ثبت شد');
+});
+
+function deleteTransaction(id){
+  if(confirm('حذف این تراکنش؟')){
+    transactions=transactions.filter(t=>t.id!==id);
+    saveData();showToast('🗑️ حذف شد');
+  }
+}
+
+function updateFilterMonths(){
+  const sel=document.getElementById('filterMonth');
+  const cur=sel.value;
+  const months=[...new Set(transactions.map(t=>getPersianYearMonth(t.date)))].sort().reverse();
+  sel.innerHTML='<option value="all">همه ماه‌ها</option>';
+  months.forEach(m=>{const p=m.split('/');sel.innerHTML+=`<option value="${m}">${shamsiMonthName(parseInt(p[1]))} ${p[0]}</option>`;});
+  if(cur)sel.value=cur;
+}
+
+// ===== اقساط =====
+function toggleDebtForm(){
+  const f=document.getElementById('debtForm');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+
+document.getElementById('debtFormInner').addEventListener('submit',function(e){
+  e.preventDefault();
+  const pc=parseInt(document.getElementById('dPaidCount').value)||0;
+  const sd=document.getElementById('dStartDate').value;
+  debts.push({
+    id:Date.now(),
+    title:document.getElementById('dTitle').value,
+    totalAmount:parseFloat(document.getElementById('dTotalAmount').value),
+    installmentAmount:parseFloat(document.getElementById('dInstallmentAmount').value),
+    totalCount:parseInt(document.getElementById('dTotalCount').value),
+    paidCount:pc,startDate:sd,
+    nextDueDate:addMonths(sd,pc)
+  });
+  saveData();this.reset();
+  document.getElementById('dStartDate').value=getTodayShamsi();
+  toggleDebtForm();
+  showToast('✅ وام ثبت شد');
+});
+
+function deleteDebt(id){
+  if(confirm('حذف کامل این پرونده وام؟')){
+    debts=debts.filter(d=>d.id!==id);
+    saveData();showToast('🗑️ حذف شد');
+  }
+}
+
+function payInstallment(id){
+  const debt=debts.find(d=>d.id===id);
+  if(!debt)return;
+  if(debt.paidCount>=debt.totalCount){showToast('✅ این وام تسویه شده!');return;}
+  transactions.push({
+    id:Date.now(),type:'expense',category:'اقساط',
+    amount:debt.installmentAmount,date:getTodayShamsi(),
+    desc:`پرداخت قسط: ${debt.title} (قسط ${debt.paidCount+1} از ${debt.totalCount})`
+  });
+  debt.paidCount+=1;
+  debt.nextDueDate=addMonths(debt.startDate,debt.paidCount);
+  if(debt.paidCount>=debt.totalCount){
+    setTimeout(()=>showToast(`🎉 وام "${debt.title}" کاملاً تسویه شد!`,4000),300);
+    sendNotif('🎉 تسویه وام!',`وام "${debt.title}" با موفقیت پرداخت شد.`);
+  }else{
+    showToast(`✅ قسط ${debt.paidCount} از ${debt.totalCount} ثبت شد`);
+  }
+  saveData();
+}
+
+// ===== ذخیره =====
+function saveData(){
+  localStorage.setItem('af_transactions',JSON.stringify(transactions));
+  localStorage.setItem('af_debts',JSON.stringify(debts));
+  updateUI();
+}
+
+function clearAllData(){
+  if(confirm('هشدار: تمام اطلاعات پاک می‌شود!')){
+    if(confirm('این عمل غیرقابل برگشت است. مطمئنید؟')){
+      ['af_transactions','af_debts','af_market','af_lastNotif'].forEach(k=>localStorage.removeItem(k));
+      transactions=[];debts=[];
+      marketPrices={dollar:0,gold:0,coin:0,updatedAt:''};
+      updateUI();showToast('🗑️ اطلاعات پاک شد');
+    }
+  }
+}
+
+// ===== آپدیت UI =====
+function updateUI(){
+  const today=getTodayShamsi();
+  const ym=getPersianYearMonth(today);
+  let totalIncome=0,totalExpense=0,mIncome=0,mExpense=0;
+  transactions.forEach(t=>{
+    if(t.type==='income'){totalIncome+=t.amount;if(getPersianYearMonth(t.date)===ym)mIncome+=t.amount;}
+    else{totalExpense+=t.amount;if(getPersianYearMonth(t.date)===ym)mExpense+=t.amount;}
+  });
+  const balance=totalIncome-totalExpense;
+  const mSaving=mIncome-mExpense;
+  const savingRate=mIncome>0?Math.max(0,(mSaving/mIncome)*100):0;
+  document.getElementById('totalBalance').innerText=formatMoney(balance);
+  document.getElementById('totalIncome').innerText=formatMoney(totalIncome);
+  document.getElementById('totalExpense').innerText=formatMoney(totalExpense);
+  document.getElementById('monthlySaving').innerText=formatMoney(mSaving);
+  document.getElementById('savingRate').innerText=savingRate.toFixed(1)+'%';
+  document.getElementById('savingProgress').style.width=Math.min(savingRate,100)+'%';
+
+  // هشدارها
+  let alertsHTML='';
+  const overdueItems=[],upcomingItems=[];
+  debts.forEach(d=>{
+    if(d.paidCount>=d.totalCount)return;
+    const diff=daysBetween(today,d.nextDueDate);
+    if(diff<0){overdueItems.push(`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(239,68,68,0.1)"><div><p style="font-size:12px;font-weight:700;color:#991b1b">${d.title}</p><p style="font-size:10px;color:#b91c1c;margin-top:2px">${Math.abs(diff)} روز گذشته · ${d.nextDueDate}</p></div><span style="font-size:12px;font-weight:800;color:#dc2626">${formatMoney(d.installmentAmount)}</span></div>`);}
+    else if(diff<=5){upcomingItems.push(`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(217,119,6,0.1)"><div><p style="font-size:12px;font-weight:700;color:#92400e">${d.title}</p><p style="font-size:10px;color:#b45309;margin-top:2px">${diff===0?'امروز سررسید!':diff+' روز مانده'} · ${d.nextDueDate}</p></div><span style="font-size:12px;font-weight:800;color:#d97706">${formatMoney(d.installmentAmount)}</span></div>`);}
+  });
+  if(overdueItems.length>0)alertsHTML+=`<div class="alert-card alert-red"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:16px">🚨</span><p style="font-size:13px;font-weight:700;color:#dc2626">اقساط معوق (${overdueItems.length})</p></div>${overdueItems.join('')}</div>`;
+  if(upcomingItems.length>0)alertsHTML+=`<div class="alert-card alert-yellow"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:16px">⚠️</span><p style="font-size:13px;font-weight:700;color:#d97706">سررسید نزدیک (${upcomingItems.length})</p></div>${upcomingItems.join('')}</div>`;
+  document.getElementById('alertsContainer').innerHTML=alertsHTML;
+
+  // کارت‌های اقساط
+  const grid=document.getElementById('debtCardsGrid');
+  if(debts.length===0){
+    grid.innerHTML=`<div style="text-align:center;padding:48px 20px;background:#fff;border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,0.05)"><div style="font-size:48px;margin-bottom:12px">📋</div><p style="font-size:15px;font-weight:700;color:#475569">هنوز وامی ثبت نشده</p><p style="font-size:12px;color:#94a3b8;margin-top:6px">برای ثبت روی دکمه بالا کلیک کنید</p></div>`;
+  }else{
+    grid.innerHTML='';
+    debts.forEach(d=>{
+      const isSettled=d.paidCount>=d.totalCount;
+      const remaining=Math.max(0,d.totalAmount-(d.paidCount*d.installmentAmount));
+      const progress=Math.min((d.paidCount/d.totalCount)*100,100);
+      let cardClass='debt-card',badge='',isOverdue=false,daysToNext=999;
+      if(isSettled){cardClass+=' debt-settled';badge=`<span class="badge badge-green">تسویه ✔️</span>`;}
+      else{daysToNext=daysBetween(today,d.nextDueDate);if(daysToNext<0){cardClass+=' debt-overdue';isOverdue=true;badge=`<span class="badge badge-red">معوق 🚨</span>`;}else if(daysToNext<=5){cardClass+=' debt-warning';badge=`<span class="badge badge-yellow">⚠️ ${daysToNext===0?'امروز':daysToNext+' روز'}</span>`;}else{cardClass+=' debt-normal';badge=`<span class="badge badge-blue">جاری 🔄</span>`;}}
+      const card=document.createElement('div');
+      card.className=cardClass;
+      card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px"><div style="flex:1;min-width:0"><h3 style="font-size:16px;font-weight:800;color:#1e293b;margin-bottom:3px">${d.title}</h3><p style="font-size:11px;color:#94a3b8">کل: ${formatMoney(d.totalAmount)} ریال</p></div>${badge}</div><div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-bottom:6px"><span>پیشرفت</span><span style="font-weight:700">${progress.toFixed(1)}٪ · ${d.paidCount}/${d.totalCount}</span></div><div class="progress-track"><div class="progress-fill" style="width:${progress}%;${isSettled?'background:linear-gradient(90deg,#0d9488,#10b981)':''}"></div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8fafc;border:1px solid #f1f5f9;border-radius:14px;padding:14px;margin-bottom:14px"><div><p style="font-size:10px;color:#94a3b8;margin-bottom:3px;font-weight:600">هر قسط</p><p style="font-size:14px;font-weight:800;color:#6366f1">${formatMoney(d.installmentAmount)}</p></div><div><p style="font-size:10px;color:#94a3b8;margin-bottom:3px;font-weight:600">باقیمانده</p><p style="font-size:14px;font-weight:800;color:#ef4444">${formatMoney(remaining)}</p></div><div style="grid-column:span 2;padding-top:10px;border-top:1px solid #f1f5f9"><p style="font-size:10px;color:#94a3b8;margin-bottom:3px;font-weight:600">سررسید بعدی</p><p style="font-size:13px;font-weight:700;color:${isOverdue?'#ef4444':'#1e293b'}">${isSettled?'پایان یافته ✅':d.nextDueDate}</p></div></div><div style="display:flex;gap:8px">${!isSettled?`<button class="btn-success" onclick="payInstallment(${d.id})">✓ پرداخت قسط ${d.paidCount+1}</button>`:`<div style="flex:1;text-align:center;padding:12px;background:#f0fdf4;border-radius:12px;font-size:13px;color:#059669;font-weight:700">🎉 تسویه شده</div>`}<button class="btn-danger-ghost" onclick="deleteDebt(${d.id})">🗑️</button></div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  // لیست تراکنش‌ها
+  const filterType=document.getElementById('filterType').value;
+  const filterMonth=document.getElementById('filterMonth').value;
+  let filtered=[...transactions].sort((a,b)=>b.date.localeCompare(a.date));
+  if(filterType!=='all')filtered=filtered.filter(t=>t.type===filterType);
+  if(filterMonth!=='all')filtered=filtered.filter(t=>getPersianYearMonth(t.date)===filterMonth);
+  const list=document.getElementById('transactionList');
+  if(filtered.length===0){list.innerHTML=`<div style="text-align:center;padding:40px;color:#94a3b8"><div style="font-size:40px;margin-bottom:10px">💸</div><p style="font-size:14px;font-weight:700">تراکنشی یافت نشد</p></div>`;}
+  else{list.innerHTML=filtered.map(t=>`<div class="trans-item"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap"><span class="trans-cat">${t.category}</span><span style="font-size:10px;color:#cbd5e1">${t.date}</span></div>${t.desc?`<p style="font-size:11px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">${t.desc}</p>`:''}</div><div style="text-align:left;flex-shrink:0;margin-right:10px"><p style="font-size:14px;font-weight:800;color:${t.type==='income'?'#0d9488':'#ef4444'}">${t.type==='income'?'+':'-'}${formatMoney(t.amount)}</p><button onclick="deleteTransaction(${t.id})" style="background:none;border:none;color:#fca5a5;font-size:10px;cursor:pointer;font-family:'Vazirmatn',sans-serif;margin-top:2px;padding:0">حذف</button></div></div>`).join('');}
+
+  renderExpenseChart();renderMarket();renderSuggestions();
+}
+
+// ===== بکاپ / بازیابی =====
+function backupData(){
+  const data={transactions,debts,marketPrices,date:getTodayShamsi(),version:2,app:'AryaFinance'};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`آریا-فایننس-${getTodayShamsi().replace(/\//g,'-')}.json`;a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 بکاپ دانلود شد');
+}
+function restoreData(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.transactions&&data.debts){
+        if(confirm(`بازیابی از ${data.date||'نامشخص'}؟ اطلاعات فعلی جایگزین می‌شود.`)){
+          transactions=data.transactions;debts=data.debts;
+          if(data.marketPrices)marketPrices=data.marketPrices;
+          localStorage.setItem('af_market',JSON.stringify(marketPrices));
+          saveData();showToast('✅ بازیابی شد!',4000);
+        }
+      }else showToast('❌ فایل معتبر نیست');
+    }catch(err){showToast('❌ خطا در خواندن فایل');}
+  };
+  reader.readAsText(file);event.target.value='';
+}
+
+// ===== دسته‌بندی =====
+function updateCategories(){
+  const type=document.getElementById('tType').value;
+  const sel=document.getElementById('tCategory');
+  sel.innerHTML='';
+  categories[type].forEach(c=>sel.innerHTML+=`<option value="${c}">${c}</option>`);
+}
+
+// ===== مقداردهی اولیه =====
+jalaliDatepicker.startWatch({time:false,persianDigits:true});
+updateCategories();
+document.getElementById('tDate').value=getTodayShamsi();
+document.getElementById('dStartDate').value=getTodayShamsi();
+document.getElementById('headerDate').innerText='📅 '+getTodayShamsi();
+updateFilterMonths();
+updateUI();
+
+// ===== ثبت Service Worker (PWA) =====
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(()=>console.log('✅ SW registered'))
+      .catch(err=>console.log('SW error:',err));
+  });
+}
+</script>
+</body>
+</html>
