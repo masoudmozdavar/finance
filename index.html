@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>آریا فایننس</title>
+<title>مسعود فایننس</title>
 
 <!-- ===== PWA ===== -->
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="آریا فایننس">
+<meta name="apple-mobile-web-app-title" content="مسعود فایننس">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%236366f1'/%3E%3Ctext y='.9em' font-size='62' x='18'%3E💎%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#6366f1">
 
@@ -199,7 +199,7 @@ input[type=number]{direction:ltr;text-align:right}
     <div class="login-blob" style="width:200px;height:200px;background:#6366f1;top:-80px;right:-60px"></div>
     <div class="login-blob" style="width:160px;height:160px;background:#0d9488;bottom:-60px;left:-50px"></div>
     <div class="login-logo">💎</div>
-    <h1 style="font-size:22px;font-weight:900;color:#1e293b;margin-bottom:4px;position:relative;z-index:1">آریا فایننس</h1>
+    <h1 style="font-size:22px;font-weight:900;color:#1e293b;margin-bottom:4px;position:relative;z-index:1">مسعود فایننس</h1>
     <p style="color:#94a3b8;font-size:13px;margin-bottom:24px;position:relative;z-index:1">مدیریت هوشمند مالی خانواده</p>
     <input type="password" id="passInput" class="login-input" placeholder="• • • •" inputmode="numeric" maxlength="10">
     <button class="login-btn" onclick="checkPass()">ورود به سیستم ←</button>
@@ -212,7 +212,7 @@ input[type=number]{direction:ltr;text-align:right}
   <div class="app-header">
     <div style="display:flex;justify-content:space-between;align-items:center">
       <div>
-        <h1 style="font-size:17px;font-weight:900;background:linear-gradient(135deg,#6366f1,#0d9488);-webkit-background-clip:text;-webkit-text-fill-color:transparent">💎 آریا فایننس</h1>
+        <h1 style="font-size:17px;font-weight:900;background:linear-gradient(135deg,#6366f1,#0d9488);-webkit-background-clip:text;-webkit-text-fill-color:transparent">💎 مسعود فایننس</h1>
         <p id="headerDate" style="font-size:10px;color:#94a3b8;margin-top:1px"></p>
       </div>
       <div style="display:flex;gap:6px">
@@ -368,7 +368,7 @@ input[type=number]{direction:ltr;text-align:right}
 <div id="toast"></div>
 <script>
 // ===== تنظیمات =====
-const APP_PASSWORD="1234"; // 🔴 رمز رو عوض کن
+const APP_PASSWORD="329568"; // 🔴 رمز رو عوض کن
 const categories={
   income:['حقوق','پاداش','سود سپرده','یارانه','فروش','اجاره دریافتی','سایر درآمدها'],
   expense:['خورد و خوراک','قبض آب/برق/گاز','اجاره خانه','پوشاک','درمان','حمل و نقل','تفریح','اقساط','آموزش','سایر هزینه‌ها']
@@ -763,7 +763,7 @@ function backupData(){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;a.download=`آریا-فایننس-${getTodayShamsi().replace(/\//g,'-')}.json`;a.click();
+  a.href=url;a.download=`مسعود-فایننس-${getTodayShamsi().replace(/\//g,'-')}.json`;a.click();
   URL.revokeObjectURL(url);
   showToast('📥 بکاپ دانلود شد');
 }
