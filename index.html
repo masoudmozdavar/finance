@@ -803,12 +803,25 @@ document.getElementById('headerDate').innerText='📅 '+getTodayShamsi();
 updateFilterMonths();
 updateUI();
 
-// ===== ثبت Service Worker (PWA) =====
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js')
-      .then(()=>console.log('✅ SW registered'))
-      .catch(err=>console.log('SW error:',err));
+// ===== ثبت Service Worker =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/finance/sw.js', {
+      scope: '/finance/'
+    })
+    .then(reg => {
+      console.log('✅ SW registered, scope:', reg.scope);
+      // وقتی آپدیت جدید آمد
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showToast('🔄 نسخه جدید آماده است، صفحه را رفرش کنید');
+          }
+        });
+      });
+    })
+    .catch(err => console.log('❌ SW error:', err));
   });
 }
 </script>
